@@ -77,36 +77,30 @@ class DBStorage:
 
     def get(self, cls, id):
         """
-        this method calls the method all() and search for a specific ID
-        -----------
-        Parameters
-        -----------
-        cls : class name
-            The class to retrieve by all()
-        id : str
-            the correspondant ID to seerch in the all retrieved objects
+        Returns the object based on the class name and its ID, or
+        None if not found
         """
-        CLASS = classes[cls.__name__]
-        if CLASS is None:
+        if cls not in classes.values():
             return None
-        for value in self.all(CLASS).values():
-            if value.id == id:
+
+        all_cls = models.storage.all(cls)
+        for value in all_cls.values():
+            if (value.id == id):
                 return value
+
         return None
+
     def count(self, cls=None):
         """
-        this method calls the method all() and count the objects
-        -----------
-        Parameters
-        -----------
-        cls : class name, optional
-            The class to retreive by all()
+        count the number of objects in storage
         """
-        if cls is None:
-            return len(self.all())
-        else:
-            CLASS = classes[cls.__name__]
-            if CLASS is None:
-                return len(self.all())
-        return len(self.all(CLASS))
+        all_class = classes.values()
 
+        if not cls:
+            count = 0
+            for clas in all_class:
+                count += len(models.storage.all(clas).values())
+        else:
+            count = len(models.storage.all(cls).values())
+
+        return count
